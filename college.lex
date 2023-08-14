@@ -1,7 +1,6 @@
 %{
 #include <stdio.h>
 #include <string.h>
-%}
 
 #define COURSES 300
 #define NUM 301
@@ -20,12 +19,12 @@ union {
 } yylval;
 
 int line = 1;
+%}
 
 %option noyywrap
 %option yylineno
 
 %%
-
 \<courses\>  { return COURSES; }
 [0-9]{5}     { yylval.num = atoi(yytext); return NUM; }
 \"[^\"]+\"   { strcpy(yylval.name, yytext); return NAME; }

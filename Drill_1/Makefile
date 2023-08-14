@@ -8,3 +8,6 @@ clean:
 run:
 	./college_lex input.txt
 
+runBad:
+	./college_lex input_bad.txt
+

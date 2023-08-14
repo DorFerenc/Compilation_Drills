@@ -28,13 +28,13 @@ int line = 1;
 \<courses\>  { return COURSES; }
 [0-9]{5}     { yylval.num = atoi(yytext); return NUM; }
 \"[^\"]+\"   { strcpy(yylval.name, yytext); return NAME; }
-[0-6](\.[0-9]+)? { yylval.credits = atof(yytext); return CREDITS; }
+[0-5](\.[0-9]+)?|6 { yylval.credits = atof(yytext); return CREDITS; }
 B\.Sc\.|M\.Sc\. { strcpy(yylval.degree, yytext); return DEGREE; }
 Software|Electrical|Mechanical|Management|Biomedical { strcpy(yylval.school, yytext); return SCHOOL; }
 Elective|elective { return ELECT; }
 [\t\r ]+    { /* skip white space */ }
 [\n]+       { line += yyleng; }
-.           { fprintf(stderr, "line %d: unrecognized token %s\n", line, yytext); }
+.           { fprintf(stderr, "***Error on line: %d, unrecognized token: %s\n", line, yytext); }
 
 %%
 
@@ -48,6 +48,10 @@ int main(int argc, char **argv) {
     }
 
     yyin = fopen(argv[1], "r");
+    if (!yyin) {
+        fprintf(stderr, "Error opening input.txt file\n");
+        return 1;
+    }
 
     printf("TOKEN\t\t\tLEXEME\t\t\tSEMANTIC VALUE\n");
     printf("---------------------------------------------------------------\n");
@@ -64,7 +68,7 @@ int main(int argc, char **argv) {
                 printf("NAME\t\t\t%s\n", yytext);
                 break;
             case CREDITS:
-                printf("CREDITS\t\t\t%.1f\n", yylval.credits);
+                printf("CREDITS\t\t\t%s\t\t\t%.1f\n", yytext, yylval.credits);
                 break;
             case DEGREE:
                 printf("DEGREE\t\t\t%s\n", yytext);
